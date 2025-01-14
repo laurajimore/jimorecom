@@ -65,6 +65,20 @@
             list-style-type: disc;
             padding-left: 2rem;
         }
+        
+        .colaboraciones .logos {
+        display: flex;
+        justify-content: center;
+        gap: 20px; /* Espacio entre las imágenes */
+        flex-wrap: wrap; /* Por si el espacio no es suficiente, se ajustan en varias filas */
+        }
+
+        .colaboraciones .logos img {
+            max-width: 200px; /* Tamaño máximo de cada imagen */
+            height: auto; /* Mantiene la proporción de las imágenes */
+            border-radius: 8px; /* Opcional, para redondear las esquinas */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Opcional, para un efecto de sombra */
+        }
 
         footer {
             text-align: center;
