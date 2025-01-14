@@ -68,16 +68,17 @@
         
         .colaboraciones .logos {
         display: flex;
-        justify-content: center;
-        gap: 20px; /* Espacio entre las imágenes */
-        flex-wrap: wrap; /* Por si el espacio no es suficiente, se ajustan en varias filas */
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px 0;
         }
 
         .colaboraciones .logos img {
-            max-width: 200px; /* Tamaño máximo de cada imagen */
-            height: auto; /* Mantiene la proporción de las imágenes */
-            border-radius: 8px; /* Opcional, para redondear las esquinas */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Opcional, para un efecto de sombra */
+        max-width: 30%;
+        height: auto;
+        object-fit: contain;
         }
 
         footer {
@@ -155,8 +156,9 @@
 
     <section class="colaboraciones">
         <h2>Colaboraciones</h2>
+        <div class="logos"> <!-- Añadimos el contenedor con la clase "logos" -->
         <img src="logo-fadmes.png" alt="Logo de la Federación Andaluza de Deportes de Montaña, Escalada y Senderismo">
-        <img src="logo_datavillus.png" alt="Logo de Datavillus Soluciones digitales servicio en gestión de la información para rentabilizar recursos y mejorar la gestión del tiempo">
+        </div>  
     </section>
 
     <footer>
