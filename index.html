@@ -67,19 +67,28 @@
         }
         
         .colaboraciones .logos {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 20px 0;
+            display: flex;
+            justify-content: center;  /* Centra las imágenes horizontalmente */
+            align-items: center;      /* Centra las imágenes verticalmente */
+            gap: 50px;                /* Aumenta el espacio entre las imágenes */
+            flex-wrap: wrap;          /* Asegura que las imágenes no se desborden */
+            padding: 20px 0;          /* Espacio superior e inferior */
         }
 
         .colaboraciones .logos img {
-        max-width: 30%;
-        height: auto;
-        object-fit: contain;
+            max-height: 100px;        /* Establece la altura máxima para las imágenes */
+            height: auto;             /* Mantiene la proporción de la imagen */
+            width: auto;              /* Deja que el ancho se ajuste proporcionalmente */
+            object-fit: contain;      /* Asegura que la imagen no se distorsione */
         }
+
+        /* Ajustar tamaño de Datavillus */
+        .colaboraciones .logos img:nth-child(2) {
+            max-height: 120px;        /* Aumenta la altura máxima solo para Datavillus */
+        }
+
+
+        
 
         footer {
             text-align: center;
@@ -102,13 +111,13 @@
 <body>
     <header>
         <h1>Laura Jiménez</h1>
-        <p>Trabajando en remoto en <strong>Gestión y Tratamiento digital de datos</strong> 📌</p>
+        <p>Gestión y Tratamiento Digital de Datos | Automatización y Transformación Digital | Inteligencia Artificial 📌</p>
     </header>
 
     <section class="perfil">
         <img src="foto_perfil.webp" alt="Foto de perfil de Laura Jiménez">
-        <p>¡Hola! Me llamo Laura y aquí presento mi perfil profesional para que puedas conocerme un poco más y saber si soy la persona idónea para ayudarte con tu proyecto y asesorarte.</p>
-        <p>Aunque me gradué en Escenografía, siempre he estado acompañada de un ordenador, lo que me ha hecho ir aprendiendo con curiosidad sobre las tendencias tecnológicas surgidas en internet y observar su impacto en la sociedad...</p>
+        <p>¡Hola! Soy Laura, una profesional con experiencia en la gestión de datos, automatización y digitalización de procesos. Mi enfoque está en optimizar flujos de trabajo mediante soluciones tecnológicas, ayudando a las organizaciones a mejorar su eficiencia y aprovechar al máximo sus recursos digitales.</p>
+        <p>Mi formación incluye un Máster en Inteligencia Artificial y experiencia en el campo de la programación, Big Data y ciberseguridad. Apasionada por la tecnología, busco siempre soluciones creativas para mejorar la eficiencia organizativa mediante la automatización y la gestión de datos inteligentes.</p>
     </section>
 
     <section class="servicios">
@@ -116,17 +125,17 @@
         <ul>
             <li>Tratamiento electrónico de datos.
                 <ul>
-                    <li>Características: Optimización de flujos de trabajo, validación de datos, digitalización, arquitectura de la información, reportes estado de datos, automatizaciones.</li>
+                    <li>Optimización de flujos de trabajo, validación de datos, digitalización, arquitectura de la información, reportes de estado de datos y automatizaciones.</li>
                 </ul>
             </li>
-            <li>Auditoría diseño UX/UI página web y aplicaciones móviles.
+            <li>Automatización de procesos.
                 <ul>
-                    <li>Características: Análisis de página web, elaboración de informe con conclusiones y plan de acciones, consultoría.</li>
+                    <li>Desarrollo de soluciones para automatizar tareas y mejorar la productividad en procesos empresariales.</li>
                 </ul>
             </li>
-            <li>Auditoría reputación digital en página web y redes sociales.
+            <li>Consultoría en Inteligencia Artificial y Big Data.
                 <ul>
-                    <li>Características: Análisis de redes sociales, elaboración de informe con conclusiones, plan de acciones y contenidos, consultoría.</li>
+                    <li>Asesoramiento sobre cómo implementar tecnologías avanzadas en proyectos de datos y analítica.</li>
                 </ul>
             </li>
         </ul>
@@ -135,31 +144,28 @@
     <section class="conocimientos">
         <h2>Conocimientos</h2>
         <h3>Herramientas</h3>
-        <p>Ofimática: Google Sheet, Apps Sheet, Apps Script, Excel, Word...</p>
-        <p>Edición: DaVinci, Affinity (Designer, Photo y Publisher), OBS, Penpot...</p>
-        <p>Lenguajes conocidos: HTML, CSS, SQL, PHP...</p>
+        <p>Ofimática: Ecosistema Google (Apps Sheet, Apps Script...), Ecosistema Microfost (Excel, Word...)</p>
+        <p>Edición: Affinity (Designer, Photo y Publisher), OBS...</p>
+        <p>Lenguajes conocidos: Java, MySQL, CSS, PHP...</p>
     </section>
 
     <section class="intereses">
         <h2>Intereses</h2>
         <ul>
-            <li>Aprender Python y JavaScript.</li>
+            <li>Explorar nuevas tecnologías, como Python y JavaScript.</li>
             <li>Metodología de gestión ARC basada en GTD.</li>
-            <li>La comedia.</li>
-            <li>Sostenibilidad del medio ambiente y optimización de recursos.</li>
-            <li>Competencias profesionales de escalada.</li>
-            <li>Juegos de mesa.</li>
-            <li>Los vídeos de gatos y pajaritos bailongos.</li>
-            <li>Star Wars con George Lucas, Dave Filoni, Jon Favreau y Tony Gilroy.</li>
+            <li>La sostenibilidad del medio ambiente y optimización de recursos.</li>
         </ul>
     </section>
 
     <section class="colaboraciones">
         <h2>Colaboraciones</h2>
-        <div class="logos"> <!-- Añadimos el contenedor con la clase "logos" -->
-        <img src="logo-fadmes.png" alt="Logo de la Federación Andaluza de Deportes de Montaña, Escalada y Senderismo">
+        <div class="logos">
+            <img src="logo-fadmes.png" alt="Logo de la Federación Andaluza de Deportes de Montaña, Escalada y Senderismo" class="logo-item">
+            <img src="logo_datavillus.png" alt="Logo de Datavillus Soluciones Digitales" class="logo-item">
         </div>  
     </section>
+
 
     <footer>
         <p>Contacto: <a href="mailto:hola@laurajimore.com">hola@laurajimore.com</a></p>
