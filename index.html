@@ -103,6 +103,13 @@
         footer a:hover {
             text-decoration: underline;
         }
+
+        .real-email {
+            display: none;
+        }
+        footer:hover .real-email {
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -164,10 +171,11 @@
     </section>
 
     <footer>
-        <p>Contacto: <a href="mailto:hola@laurajimore.com">laurajimore.io@gmail.com</a></p>
+        <p>Contacto: <strong>hola [arroba] laurajimore [punto] com</strong><span class="real-email">(<a href="mailto:hola@laurajimore.com">hola@laurajimore.com</a>)</span></p>
         <p>Sígueme en: <a href="https://bsky.app/profile/laurajimore.bsky.social" target="_blank">BlueSky</a></p>
         <p><a href="#">Descargar mi CV en PDF</a></p>
         <p>Hecho con ❤️ por Laura Jiménez en Córdoba (ESP)</p>
     </footer>
+    
 </body>
 </html>
