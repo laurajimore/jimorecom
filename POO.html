@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP & PSR Certification Exam (Hard Mode)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --bg-input: #2d2d2d;
+            --accent-blue: #3794ff;
+            --accent-green: #4caf50;
+            --accent-red: #f44336;
+            --accent-orange: #ff9800;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border: #333333;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- Estilo Tipo IDE --- */
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Barra Superior (Tabs) --- */
+        .tab-bar {
+            display: flex;
+            background-color: #252526;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 15px 25px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            border-right: 1px solid var(--border);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover { background-color: #2d2d2d; color: var(--text-main); }
+        
+        .tab-btn.active {
+            background-color: var(--bg-card);
+            color: var(--accent-blue);
+            border-top: 2px solid var(--accent-blue);
+        }
+
+        /* --- Vistas --- */
+        .view {
+            padding: 30px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Tipografía y Elementos --- */
+        h1 { color: var(--accent-blue); margin-top: 0; font-weight: 600; }
+        h2 { font-size: 1.1rem; line-height: 1.5; color: var(--text-main); margin-bottom: 20px; border-left: 4px solid var(--accent-orange); padding-left: 15px; }
+        p { color: var(--text-muted); line-height: 1.6; }
+        
+        .code-font { font-family: 'Fira Code', monospace; }
+
+        /* --- Botones --- */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background-color: var(--accent-blue); color: white; }
+        .btn-primary:hover { background-color: #2679d3; }
+        .btn-primary:disabled { background-color: #444; color: #888; cursor: not-allowed; }
+
+        .btn-secondary { background-color: #333; color: var(--text-main); border: 1px solid #444; }
+        .btn-secondary:hover { background-color: #444; }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-warning { background-color: var(--accent-orange); color: #121212; }
+        .btn-danger { background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); }
+        .btn-danger:hover { background-color: rgba(244, 67, 54, 0.1); }
+
+        /* --- Componentes del Examen --- */
+        .progress-container {
+            height: 4px;
+            background-color: #333;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-blue);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question-box { margin-bottom: 25px; }
+        
+        /* Bloque de código visual */
+        .snippet-box {
+            background-color: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #d4d4d4;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        /* Opciones generales */
+        .options-list { display: grid; gap: 12px; }
+        
+        .option-item {
+            background-color: var(--bg-input);
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start; /* Alineación arriba para bloques grandes */
+        }
+
+        .option-item:hover { border-color: var(--accent-blue); background-color: #333; }
+        
+        .option-item.selected {
+            background-color: rgba(55, 148, 255, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .option-marker {
+            min-width: 18px; width: 18px; height: 18px;
+            border: 2px solid #555;
+            border-radius: 50%;
+            margin-right: 15px;
+            margin-top: 2px; /* Alineación óptica */
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .option-item.selected .option-marker {
+            border-color: var(--accent-blue);
+            background-color: var(--accent-blue);
+        }
+        .option-item.selected .option-marker::after {
+            content: ''; width: 6px; height: 6px; background: white; border-radius: 50%;
+        }
+
+        /* Estilos específicos para opciones de código */
+        .option-item.code-layout {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+        }
+        .option-item.code-layout:hover {
+            border-color: var(--accent-blue);
+            background-color: #222;
+        }
+        .option-item.code-layout pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* --- Resultados --- */
+        .score-panel {
+            text-align: center;
+            padding: 40px;
+            background-color: #252526;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .score-big { font-size: 3rem; font-weight: bold; color: var(--accent-blue); }
+        
+        .result-row {
+            background-color: #252526;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid transparent;
+            border-radius: 0 4px 4px 0;
+        }
+        .result-row.correct { border-color: var(--accent-green); }
+        .result-row.wrong { border-color: var(--accent-red); }
+
+        /* --- Estadísticas --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-box {
+            background-color: #252526;
+            padding: 20px;
+            border-radius: 6px;
+            border-bottom: 2px solid var(--border);
+        }
+        .stat-value { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; }
+        .text-green { color: var(--accent-green); }
+        .text-red { color: var(--accent-red); }
+        .text-blue { color: var(--accent-blue); }
+
+        .history-list { max-height: 300px; overflow-y: auto; }
+        .history-item {
+            display: flex; justify-content: space-between; padding: 10px;
+            border-bottom: 1px solid #333; font-family: 'Fira Code', monospace; font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <div class="tab-bar">
+            <button class="tab-btn active" id="navExam" onclick="switchView('setup')">
+                <i class="fas fa-terminal"></i> Examen_Avanzado.php
+            </button>
+            <button class="tab-btn" id="navStats" onclick="switchView('stats')">
+                <i class="fas fa-chart-bar"></i> Stats.json
+            </button>
+        </div>
+
+        <div class="view active" id="view-setup">
+            <div style="text-align: center; padding: 40px 20px;">
+                <i class="fab fa-php" style="font-size: 5rem; color: #777BB4; margin-bottom: 20px;"></i>
+                <h1>Certificación PHP & PSR</h1>
+                <p style="max-width: 600px; margin: 0 auto 30px auto; color: var(--text-muted);">
+                    Simulación de examen nivel experto. Las preguntas de sintaxis requieren validación visual de bloques de código.
+                    Los distractores han sido diseñados para ser sintácticamente plausibles pero incorrectos.
+                </p>
+
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <div style="background: #252526; padding: 15px 25px; border-radius: 4px; border: 1px solid #333;">
+                        <span style="display:block; font-size: 1.2rem; font-weight: bold; color: var(--accent-blue);">40</span>
+                        <span style="font-size: 0.8rem; color: #888;">Preguntas</span>
+                    </div>
+                    <div style="background: #252526; padding: 15px 25px; border-radius: 4px; border: 1px solid #333;">
+                        <span style="display:block; font-size: 1.2rem; font-weight: bold; color: var(--accent-red);">Hard</span>
+                        <span style="font-size: 0.8rem; color: #888;">Dificultad</span>
+                    </div>
+                    <div style="background: #252526; padding: 15px 25px; border-radius: 4px; border: 1px solid #333;">
+                        <span style="display:block; font-size: 1.2rem; font-weight: bold; color: var(--accent-orange);">PER-CS</span>
+                        <span style="font-size: 0.8rem; color: #888;">Estandard</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <button class="btn btn-primary" onclick="startFullQuiz()">
+                        <i class="fas fa-play"></i> Iniciar Examen Completo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="view" id="view-quiz">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span id="quizModeLabel" class="code-font" style="color: var(--accent-orange);">// Mode: Hardcore</span>
+                <span id="progressText" class="code-font" style="color: var(--text-muted);">1 / 40</span>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="question-box">
+                <h2 id="questionText"></h2>
+                
+                <div id="codeSnippet" class="snippet-box" style="display: none;"></div>
+
+                <div class="options-list" id="optionsContainer">
+                    </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="cancelQuiz()" style="color: var(--accent-red); border-color: #442222;">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+                        Siguiente <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="view" id="view-result">
+            <div class="score-panel">
+                <p style="margin:0; color: #888;">Resultado Final</p>
+                <div class="score-big code-font" id="finalScore">0%</div>
+                <p id="finalMessage" style="margin-top: 10px;"></p>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 30px;">
+                <button class="btn btn-primary" onclick="switchView('setup')">
+                    <i class="fas fa-home"></i> Ir al Inicio
+                </button>
+                <button class="btn btn-secondary" onclick="switchView('stats')">
+                    <i class="fas fa-chart-line"></i> Ver Estadísticas
+                </button>
+            </div>
+
+            <h3>Detalle de Respuestas</h3>
+            <div id="resultsList"></div>
+        </div>
+
+        <div class="view" id="view-stats">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="border: none; padding: 0; margin: 0;">Rendimiento</h2>
+                <button class="btn btn-danger" onclick="resetStats()" style="font-size: 0.8rem;">
+                    <i class="fas fa-trash"></i> Reset Data
+                </button>
+            </div>
+
+            <div id="reviewPanel" style="background: rgba(255, 152, 0, 0.1); border: 1px solid var(--accent-orange); padding: 20px; border-radius: 6px; margin-bottom: 25px; display: none;">
+                <h3 style="color: var(--accent-orange); margin-top: 0;"><i class="fas fa-bug"></i> Debugging Required</h3>
+                <p>Se han detectado <strong id="errorCount">0</strong> conceptos con errores frecuentes.</p>
+                <button class="btn btn-warning" onclick="startWeakestQuiz()">
+                    <i class="fas fa-wrench"></i> Repasar Fallos
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value text-green" id="statTotalAttempts">0</div>
+                    <div class="stat-label">Exámenes Completados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value text-blue" id="statAvgScore">0%</div>
+                    <div class="stat-label">Promedio Aciertos</div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">Conceptos a Mejorar (Top 5)</h3>
+            <div id="weakestConceptsList" style="margin-bottom: 30px;"></div>
+
+            <h3>Historial (Log)</h3>
+            <div class="history-list" id="historyLog"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA: 40 PREGUNTAS MODIFICADAS ---
+        // layout: 'code' activa la visualización de bloques
+        // Las respuestas incorrectas son ahora "trampas" realistas.
+        const fullQuestionData = [
+            { 
+                q: "Si un namespace App\\Core está mapeado al directorio src/ con PSR-4, ¿dónde se ubicará la clase App\\Core\\Database?", 
+                a: "src/Database.php",
+                layout: 'code',
+                example: "Autoload: 'App\\Core\\' => 'src/'", 
+                options: [
+                    "src/Database.php", 
+                    "src/Core/Database.php", 
+                    "app/Core/Database.php", 
+                    "vendor/App/Core/Database.php"
+                ] 
+            },
+            { 
+                q: "¿Qué operador se usa para separar niveles de namespaces?", 
+                a: "App\\Controladores\\Usuario",
+                layout: 'code',
+                options: [
+                    "App\\Controladores\\Usuario", 
+                    "App/Controladores/Usuario", 
+                    "App.Controladores.Usuario", 
+                    "App::Controladores::Usuario"
+                ] 
+            },
+            { 
+                q: "¿Qué hace el comando composer require monolog/monolog?", 
+                a: "Descarga el paquete a vendor/, añade la dependencia a composer.json y actualiza composer.lock.", 
+                options: [
+                    "Descarga el paquete a vendor/, añade la dependencia a composer.json y actualiza composer.lock.", 
+                    "Únicamente descarga el código fuente a vendor/ sin modificar archivos de configuración.", 
+                    "Actualiza todas las librerías existentes antes de descargar la nueva dependencia.", 
+                    "Solo añade la referencia en composer.json, requiere ejecutar composer install posteriormente."
+                ] 
+            },
+            { 
+                q: "¿Qué codificación debe usarse para los archivos PHP según PSR-1?", 
+                a: "UTF-8 sin BOM (Byte Order Mark).", 
+                options: [
+                    "UTF-8 sin BOM (Byte Order Mark).", 
+                    "UTF-8 con BOM para asegurar compatibilidad de caracteres.", 
+                    "ISO-8859-1 para optimizar el tamaño del archivo.", 
+                    "ASCII extendido para compatibilidad legacy."
+                ] 
+            },
+            { 
+                q: "¿Qué método define el constructor de una clase en PHP?", 
+                a: "public function __construct()",
+                layout: 'code',
+                options: [
+                    "public function __construct()", 
+                    "public function construct()", 
+                    "public function __init()", 
+                    "public function ClassName()"
+                ] 
+            },
+            { 
+                q: "¿Qué es Packagist (packagist.org)?", 
+                a: "El repositorio predeterminado de agregación de metadatos de paquetes para Composer.", 
+                options: [
+                    "El repositorio predeterminado de agregación de metadatos de paquetes para Composer.", 
+                    "El binario ejecutable que gestiona las dependencias locales.", 
+                    "Un framework MVC ligero incluido en el núcleo de PHP.", 
+                    "El sistema de control de versiones oficial para paquetes PHP."
+                ] 
+            },
+            { 
+                q: "¿Dónde se coloca la llave { al definir una clase según PER Coding Style?", 
+                a: "class MiClase\n{\n    // body\n}",
+                layout: 'code',
+                options: [
+                    "class MiClase\n{\n    // body\n}", 
+                    "class MiClase {\n    // body\n}", 
+                    "class MiClase\n\t{\n\t// body\n\t}", 
+                    "class MiClase\n{\n// body\n}"
+                ] 
+            },
+            { 
+                q: "¿Cuál es el propósito principal de PSR-4?", 
+                a: "Especificar un estándar interoperable de autoloading que mapea prefijos de namespace a directorios del sistema de archivos.", 
+                options: [
+                    "Especificar un estándar interoperable de autoloading que mapea prefijos de namespace a directorios del sistema de archivos.", 
+                    "Definir las reglas estilísticas de indentación y formato de código (Coding Style).", 
+                    "Proveer una interfaz común para librerías de registro de logs (Logging Interface).", 
+                    "Estandarizar los mensajes de respuesta HTTP y middlewares."
+                ] 
+            },
+            { 
+                q: "¿Qué permite la declaración namespace App\\DB;?", 
+                a: "Encapsula los elementos definidos (clases, funciones, constantes) bajo el espacio lógico App\\DB.", 
+                options: [
+                    "Encapsula los elementos definidos (clases, funciones, constantes) bajo el espacio lógico App\\DB.", 
+                    "Importa automáticamente todas las clases dentro del directorio DB de la aplicación.", 
+                    "Define la ubicación física del archivo en el servidor /App/DB.", 
+                    "Permite el acceso a variables globales de la base de datos."
+                ] 
+            },
+            { 
+                q: "¿Qué diferencia hay entre composer update y composer install?", 
+                a: "'install' lee composer.lock para instalar versiones exactas; 'update' lee composer.json y regenera el lock.", 
+                options: [
+                    "'install' lee composer.lock para instalar versiones exactas; 'update' lee composer.json y regenera el lock.", 
+                    "'install' descarga las últimas versiones disponibles; 'update' solo actualiza el autoloader.", 
+                    "'update' se debe usar siempre en producción para tener parches de seguridad.", 
+                    "No existe diferencia funcional, 'update' es un alias obsoleto de 'install'."
+                ] 
+            },
+            { 
+                q: "¿Cuál es la longitud máxima, en soft limit, de una línea según PER Coding Style?", 
+                a: "120 caracteres.", 
+                options: [
+                    "120 caracteres.", 
+                    "80 caracteres.", 
+                    "100 caracteres.", 
+                    "140 caracteres."
+                ] 
+            },
+            { 
+                q: "Si un archivo PHP no declara namespace, ¿dónde se ubican sus clases?", 
+                a: "En el Namespace Global (\\).", 
+                layout: 'code',
+                options: [
+                    "namespace \\ (Global)", 
+                    "namespace main", 
+                    "namespace default", 
+                    "namespace root"
+                ] 
+            },
+            { 
+                q: "¿Cómo se implementa la herencia en PHP?", 
+                a: "class Gato extends Animal",
+                layout: 'code',
+                options: [
+                    "class Gato extends Animal", 
+                    "class Gato implements Animal", 
+                    "class Gato inherits Animal", 
+                    "class Gato : Animal"
+                ] 
+            },
+            { 
+                q: "¿Qué hace el comando composer install?", 
+                a: "Resuelve e instala dependencias listadas en composer.lock para garantizar consistencia de entorno.", 
+                options: [
+                    "Resuelve e instala dependencias listadas en composer.lock para garantizar consistencia de entorno.", 
+                    "Ignora composer.lock y busca las versiones más recientes permitidas en composer.json.", 
+                    "Instala el binario de Composer globalmente en el sistema operativo.", 
+                    "Inicializa un nuevo proyecto creando un archivo composer.json vacío."
+                ] 
+            },
+            { 
+                q: "Según PSR-1, ¿cómo deben nombrarse las clases en PHP?", 
+                a: "StudlyCaps (PascalCase).", 
+                layout: 'code',
+                options: [
+                    "StudlyCaps (PascalCase)", 
+                    "camelCase", 
+                    "snake_case", 
+                    "UPPER_CASE"
+                ] 
+            },
+            { 
+                q: "¿Qué archivo genera Composer para el autoloading de clases?", 
+                a: "vendor/autoload.php",
+                layout: 'code',
+                options: [
+                    "vendor/autoload.php", 
+                    "src/autoload.php", 
+                    "composer/autoload.php", 
+                    "vendor/composer.json"
+                ] 
+            },
+            { 
+                q: "¿Qué modificador de acceso restringe el acceso solo a la clase actual?", 
+                a: "private",
+                layout: 'code',
+                options: [
+                    "private", 
+                    "protected", 
+                    "public", 
+                    "static"
+                ] 
+            },
+            { 
+                q: "¿Para qué sirve la palabra use en namespaces?", 
+                a: "Para importar FQCNs (Fully Qualified Class Names) o crear alias en el ámbito actual.", 
+                options: [
+                    "Para importar FQCNs (Fully Qualified Class Names) o crear alias en el ámbito actual.", 
+                    "Para incluir físicamente el contenido de otro archivo PHP (similar a require).", 
+                    "Para heredar métodos de una clase padre sin extenderla.", 
+                    "Para declarar que una variable debe persistir en memoria."
+                ] 
+            },
+            { 
+                q: "¿Qué hace use App\\DB as Database;?", 
+                a: "Permite referenciar a App\\DB usando el identificador corto 'Database'.", 
+                options: [
+                    "Permite referenciar a App\\DB usando el identificador corto 'Database'.", 
+                    "Renombra permanentemente la clase original en el namespace global.", 
+                    "Instancia un objeto de App\\DB en la variable $Database.", 
+                    "Genera un error si la clase Database ya existe en el directorio."
+                ] 
+            },
+            { 
+                q: "En PSR-4, ¿cuál es la principal finalidad de la especificación de autoloading?", 
+                a: "Carga diferida (lazy loading) de clases en tiempo de ejecución basada en namespaces.", 
+                options: [
+                    "Carga diferida (lazy loading) de clases en tiempo de ejecución basada en namespaces.", 
+                    "Precarga (preloading) de todos los archivos al inicio del script para mejorar rendimiento.", 
+                    "Validación sintáctica estricta de los archivos antes de su inclusión.", 
+                    "Compilación Just-In-Time (JIT) del código PHP."
+                ] 
+            },
+            { 
+                q: "En composer.json, ¿qué define la clave \"require\"?", 
+                a: "Paquetes necesarios para la ejecución de la aplicación en cualquier entorno.", 
+                options: [
+                    "Paquetes necesarios para la ejecución de la aplicación en cualquier entorno.", 
+                    "Paquetes necesarios exclusivamente para desarrollo y testing (ej. PHPUnit).", 
+                    "Extensiones de PHP (ext-*) requeridas por el sistema operativo.", 
+                    "Scripts de automatización post-instalación."
+                ] 
+            },
+            { 
+                q: "En PHP, ¿para qué se utilizan los namespaces?", 
+                a: "Para resolver colisiones de nombres entre librerías y organizar código lógicamente.", 
+                options: [
+                    "Para resolver colisiones de nombres entre librerías y organizar código lógicamente.", 
+                    "Para gestionar la conexión persistente a bases de datos múltiples.", 
+                    "Para ofuscar el código fuente y proteger la propiedad intelectual.", 
+                    "Para definir variables de entorno accesibles globalmente."
+                ] 
+            },
+            { 
+                q: "¿Qué es una interfaz en PHP?", 
+                a: "Un contrato que obliga a las clases implementadoras a definir métodos específicos con firmas coincidentes.", 
+                options: [
+                    "Un contrato que obliga a las clases implementadoras a definir métodos específicos con firmas coincidentes.", 
+                    "Una clase abstracta que puede contener implementación parcial de métodos.", 
+                    "Un rasgo (trait) que permite reutilización de código horizontal.", 
+                    "Un archivo de configuración que define constantes globales."
+                ] 
+            },
+            { 
+                q: "¿Qué es Composer en PHP?", 
+                a: "Un gestor de dependencias a nivel de aplicación.", 
+                options: [
+                    "Un gestor de dependencias a nivel de aplicación.", 
+                    "Un gestor de paquetes a nivel de sistema operativo (como apt o yum).", 
+                    "Un entorno de desarrollo integrado (IDE) para PHP.", 
+                    "Un servidor web embebido para pruebas locales."
+                ] 
+            },
+            { 
+                q: "¿Cómo importar múltiples clases de un mismo namespace?", 
+                a: "use App\\Modelos\\{Usuario, Producto};",
+                layout: 'code',
+                options: [
+                    "use App\\Modelos\\{Usuario, Producto};", 
+                    "use App\\Modelos\\[Usuario, Producto];", 
+                    "use App\\Modelos\\(Usuario, Producto);", 
+                    "import App\\Modelos\\Usuario, Producto;"
+                ] 
+            },
+            { 
+                q: "¿Cuál es la diferencia principal entre composer update y composer install en CI/CD?", 
+                a: "'install' garantiza builds deterministas usando el .lock; 'update' puede introducir cambios inesperados.", 
+                options: [
+                    "'install' garantiza builds deterministas usando el .lock; 'update' puede introducir cambios inesperados.", 
+                    "'update' es preferible en CI/CD porque descarga parches de seguridad automáticamente.", 
+                    "'install' falla si el archivo .lock es más antiguo que el .json.", 
+                    "No hay diferencia en entornos de CI/CD, ambos comandos funcionan igual."
+                ] 
+            },
+            { 
+                q: "¿Cómo llamar a un método estático miMetodo de la clase MiClase?", 
+                a: "MiClase::miMetodo();",
+                layout: 'code',
+                options: [
+                    "MiClase::miMetodo();", 
+                    "MiClase->miMetodo();", 
+                    "MiClase.miMetodo();", 
+                    "(new MiClase)::miMetodo();"
+                ] 
+            },
+            { 
+                q: "¿Para qué sirve el archivo composer.lock?", 
+                a: "Almacena el grafo de dependencias resuelto y las versiones exactas (commit hashes) instaladas.", 
+                options: [
+                    "Almacena el grafo de dependencias resuelto y las versiones exactas (commit hashes) instaladas.", 
+                    "Bloquea el directorio vendor para evitar escrituras accidentales.", 
+                    "Contiene las claves API y credenciales de repositorios privados.", 
+                    "Es un archivo temporal generado durante la descarga que debe ser ignorado en git."
+                ] 
+            },
+            { 
+                q: "¿Qué característica tiene una propiedad estática en PHP?", 
+                a: "Su valor es compartido entre todas las instancias y se accede sin instanciar la clase.", 
+                options: [
+                    "Su valor es compartido entre todas las instancias y se accede sin instanciar la clase.", 
+                    "Es inmutable; su valor no puede cambiar una vez asignado (equivalente a const).", 
+                    "Solo es visible dentro del método estático donde fue declarada.", 
+                    "Se reinicia a null cada vez que se instancia un nuevo objeto."
+                ] 
+            },
+            { 
+                q: "¿Cómo usar una clase del mismo namespace sin use?", 
+                a: "new ClaseHerman();",
+                layout: 'code',
+                options: [
+                    "new ClaseHerman();", 
+                    "new self::ClaseHerman();", 
+                    "new .\\ClaseHerman();", 
+                    "use ClaseHerman; // Obligatorio"
+                ] 
+            },
+            { 
+                q: "¿Cómo se declara un namespace en PHP?", 
+                a: "namespace App\\Core;",
+                layout: 'code',
+                options: [
+                    "namespace App\\Core;", 
+                    "package App\\Core;", 
+                    "declare namespace App\\Core;", 
+                    "<namespace name='App\\Core'>"
+                ] 
+            },
+            { 
+                q: "¿Qué hace use App\\DB\\Connection; en un script PHP?", 
+                a: "Importa la clase Connection al ámbito actual.", 
+                options: [
+                    "Importa la clase Connection al ámbito actual.", 
+                    "Ejecuta el constructor de la clase Connection inmediatamente.", 
+                    "Verifica si el archivo Connection.php existe físicamente.", 
+                    "Define un alias global accesible desde otros archivos."
+                ] 
+            },
+            { 
+                q: "¿Cómo se suele incluir el autoloader de Composer en un script PHP?", 
+                a: "require __DIR__ . '/vendor/autoload.php';",
+                layout: 'code',
+                options: [
+                    "require __DIR__ . '/vendor/autoload.php';", 
+                    "include_once 'composer/autoload.php';", 
+                    "use Composer\\Autoload;", 
+                    "import 'vendor/autoload';"
+                ] 
+            },
+            { 
+                q: "¿Cómo deben nombrarse los métodos según PER Coding Style?", 
+                a: "camelCase()",
+                layout: 'code',
+                options: [
+                    "camelCase()", 
+                    "PascalCase()", 
+                    "snake_case()", 
+                    "kebab-case()"
+                ] 
+            },
+            { 
+                q: "Según PER Coding Style 2.0, ¿cuántos espacios se usan para la indentación?", 
+                a: "4 espacios (no tabuladores).", 
+                options: [
+                    "4 espacios (no tabuladores).", 
+                    "2 espacios.", 
+                    "1 tabulador real.", 
+                    "Mezcla de tabs y espacios según alineación."
+                ] 
+            },
+            { 
+                q: "¿Cuándo se ejecuta el destructor de un objeto en PHP?", 
+                a: "Cuando el Garbage Collector detecta que no hay referencias al objeto o al cierre del script.", 
+                options: [
+                    "Cuando el Garbage Collector detecta que no hay referencias al objeto o al cierre del script.", 
+                    "Inmediatamente después de ejecutar el último método de la instancia.", 
+                    "Solo si se invoca explícitamente unset($objeto).", 
+                    "Cuando se cierra la conexión HTTP, independientemente de las referencias."
+                ] 
+            },
+            { 
+                q: "¿Qué es una clase abstracta en PHP?", 
+                a: "Una clase que no puede ser instanciada y sirve como plantilla parcial para subclases.", 
+                options: [
+                    "Una clase que no puede ser instanciada y sirve como plantilla parcial para subclases.", 
+                    "Una clase que contiene solo métodos abstractos (sin cuerpo).", 
+                    "Una clase final que no puede ser heredada.", 
+                    "Una clase que se instancia automáticamente al cargar el script."
+                ] 
+            },
+            { 
+                q: "Según PSR-4, ¿qué extensión deben tener los archivos que contienen clases PHP?", 
+                a: ".php",
+                layout: 'code',
+                options: [
+                    ".php", 
+                    ".class.php", 
+                    ".inc", 
+                    ".hh"
+                ] 
+            },
+            { 
+                q: "¿Cómo definir una constante en una clase PHP con visibilidad pública?", 
+                a: "public const VERSION = '1.0';",
+                layout: 'code',
+                options: [
+                    "public const VERSION = '1.0';", 
+                    "define('VERSION', '1.0');", 
+                    "public static final $VERSION = '1.0';", 
+                    "const public VERSION = '1.0';"
+                ] 
+            },
+            { 
+                q: "¿Para qué sirven los traits en PHP?", 
+                a: "Mecanismo de reutilización de código para superar la limitación de herencia simple.", 
+                options: [
+                    "Mecanismo de reutilización de código para superar la limitación de herencia simple.", 
+                    "Interfaces que permiten definir constantes y métodos estáticos.", 
+                    "Clases anónimas que se instancian en tiempo de ejecución.", 
+                    "Decoradores para modificar el comportamiento de métodos existentes."
+                ] 
+            }
+        ];
+
+        // --- APP STATE ---
+        let questions = [];
+        let currentIndex = 0;
+        let userSelections = [];
+        let results = [];
+
+        // --- UTILS ---
+        function shuffle(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function getStats() {
+            const data = localStorage.getItem('phpExamStats');
+            return data ? JSON.parse(data) : { history: [], concepts: {} };
+        }
+
+        function saveStats(score, total, detailedResults) {
+            let stats = getStats();
+            const date = new Date().toLocaleString();
+            stats.history.unshift({ date, score, total });
+            if (stats.history.length > 20) stats.history.pop();
+
+            detailedResults.forEach(r => {
+                if (!stats.concepts[r.q]) {
+                    stats.concepts[r.q] = { attempts: 0, mistakes: 0 };
+                }
+                stats.concepts[r.q].attempts++;
+                if (!r.isCorrect) stats.concepts[r.q].mistakes++;
+            });
+            localStorage.setItem('phpExamStats', JSON.stringify(stats));
+        }
+
+        // --- CORE LOGIC ---
+        function startFullQuiz() {
+            questions = JSON.parse(JSON.stringify(fullQuestionData));
+            questions = shuffle(questions);
+            questions.forEach(q => q.options = shuffle(q.options));
+            initQuiz("Full Exam Mode");
+        }
+
+        function startWeakestQuiz() {
+            const stats = getStats();
+            let weakQuestions = fullQuestionData.filter(q => {
+                const record = stats.concepts[q.q];
+                return record && record.mistakes > 0;
+            });
+
+            if (weakQuestions.length === 0) {
+                alert("No hay fallos registrados. ¡Buen trabajo!");
+                return;
+            }
+
+            questions = JSON.parse(JSON.stringify(weakQuestions));
+            questions = shuffle(questions);
+            questions.forEach(q => q.options = shuffle(q.options));
+
+            initQuiz("Debugging Mode (Weakest Links)");
+        }
+
+        function initQuiz(modeName) {
+            currentIndex = 0;
+            userSelections = new Array(questions.length).fill(null);
+            results = [];
+            
+            document.getElementById('quizModeLabel').innerText = `// Mode: ${modeName}`;
+            switchView('quiz');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            
+            document.getElementById('progressText').innerText = `${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('questionText').innerText = q.q;
+            
+            const percent = ((currentIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            const snippetBox = document.getElementById('codeSnippet');
+            if (q.example) {
+                snippetBox.style.display = 'block';
+                snippetBox.innerText = q.example;
+            } else {
+                snippetBox.style.display = 'none';
+            }
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            const currentSelected = userSelections[currentIndex];
+            const isCodeLayout = (q.layout === 'code');
+
+            q.options.forEach((opt, idx) => {
+                const item = document.createElement('div');
+                
+                // Aplicar clase especial si es pregunta de código
+                item.className = 'option-item';
+                if (isCodeLayout) item.classList.add('code-font', 'code-layout');
+                if (currentSelected === idx) item.classList.add('selected');
+                
+                // Contenido condicional (Pre vs Span)
+                let contentHtml = '';
+                if(isCodeLayout) {
+                    contentHtml = `<pre>${escapeHtml(opt)}</pre>`;
+                } else {
+                    contentHtml = `<span>${escapeHtml(opt)}</span>`;
+                }
+
+                item.innerHTML = `
+                    <div class="option-marker"></div>
+                    ${contentHtml}
+                `;
+                item.onclick = () => selectOption(idx);
+                container.appendChild(item);
+            });
+
+            updateNavButtons(currentSelected);
+        }
+
+        function selectOption(idx) {
+            userSelections[currentIndex] = idx;
+            renderQuestion();
+        }
+
+        function updateNavButtons(selection) {
+            document.getElementById('prevBtn').disabled = (currentIndex === 0);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = (selection === null || selection === undefined);
+            
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerHTML = 'Finalizar <i class="fas fa-check"></i>';
+                nextBtn.onclick = finishQuiz;
+            } else {
+                nextBtn.innerHTML = 'Siguiente <i class="fas fa-arrow-right"></i>';
+                nextBtn.onclick = nextQuestion;
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            let score = 0;
+            const list = document.getElementById('resultsList');
+            list.innerHTML = '';
+            results = [];
+
+            questions.forEach((q, idx) => {
+                const selectedOpt = q.options[userSelections[idx]];
+                const isCorrect = (selectedOpt === q.a);
+                if (isCorrect) score++;
+
+                results.push({ q: q.q, selected: selectedOpt, answer: q.a, isCorrect });
+            });
+
+            // Resultados detallados
+            results.forEach((r, i) => {
+                const div = document.createElement('div');
+                div.className = `result-row ${r.isCorrect ? 'correct' : 'wrong'}`;
+                
+                // Formateo para el resumen final también
+                const displaySelected = `<span class="code-font">${escapeHtml(r.selected)}</span>`;
+                const displayCorrect = `<span class="code-font">${escapeHtml(r.answer)}</span>`;
+
+                div.innerHTML = `
+                    <div style="font-weight:bold; margin-bottom:8px;">${i+1}. ${r.q}</div>
+                    ${r.isCorrect 
+                        ? `<div class="text-green"><i class="fas fa-check"></i> ${displaySelected}</div>` 
+                        : `<div class="text-red"><i class="fas fa-times"></i> Tu respuesta: <br>${displaySelected}</div>
+                           <div class="text-green" style="margin-top:8px; padding-top:8px; border-top:1px dashed #444;"><i class="fas fa-arrow-right"></i> Correcta: <br>${displayCorrect}</div>`
+                    }
+                `;
+                list.appendChild(div);
+            });
+
+            const percent = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').innerText = `${percent}%`;
+            
+            let msg = "";
+            let color = "";
+            if(percent >= 90) { msg = "EXCELLENT. Ready for production."; color = "var(--accent-green)"; }
+            else if(percent >= 70) { msg = "PASSABLE. Code review suggested."; color = "var(--accent-blue)"; }
+            else { msg = "CRITICAL FAILURE. RTFM needed."; color = "var(--accent-red)"; }
+
+            document.getElementById('finalScore').style.color = color;
+            document.getElementById('finalMessage').innerText = msg;
+            document.getElementById('finalMessage').style.color = color;
+
+            saveStats(score, questions.length, results);
+            switchView('result');
+        }
+
+        function cancelQuiz() {
+            if(confirm("¿Abortar examen? Se perderá el progreso.")) {
+                switchView('setup');
+            }
+        }
+
+        // --- STATS LOGIC ---
+        function renderStats() {
+            const stats = getStats();
+            const weakList = document.getElementById('weakestConceptsList');
+            weakList.innerHTML = '';
+
+            let conceptsArr = Object.keys(stats.concepts).map(key => {
+                const c = stats.concepts[key];
+                return { name: key, ...c, failRate: (c.mistakes/c.attempts)*100 };
+            });
+
+            const failed = conceptsArr.filter(c => c.mistakes > 0).sort((a,b) => b.failRate - a.failRate);
+
+            document.getElementById('errorCount').innerText = failed.length;
+            document.getElementById('reviewPanel').style.display = failed.length > 0 ? 'block' : 'none';
+
+            if (failed.length === 0) {
+                weakList.innerHTML = '<p class="text-muted">No hay datos de errores aun.</p>';
+            } else {
+                failed.slice(0, 5).forEach(c => {
+                    const div = document.createElement('div');
+                    div.style.background = '#252526';
+                    div.style.padding = '12px';
+                    div.style.marginBottom = '8px';
+                    div.style.borderRadius = '4px';
+                    div.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:5px;">
+                            <span style="color:#ddd; font-weight:600;">${c.name.substring(0, 60)}...</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888;">
+                            <span>Fallos: ${c.mistakes} / ${c.attempts}</span>
+                            <span class="text-red">${Math.round(c.failRate)}% Tasa de Error</span>
+                        </div>
+                        <div style="height:4px; background:#333; margin-top:5px; border-radius:2px;">
+                            <div style="height:100%; width:${c.failRate}%; background:var(--accent-red); border-radius:2px;"></div>
+                        </div>
+                    `;
+                    weakList.appendChild(div);
+                });
+            }
+
+            document.getElementById('statTotalAttempts').innerText = stats.history.length;
+            if(stats.history.length > 0) {
+                const avg = stats.history.reduce((acc, curr) => acc + (curr.score/curr.total), 0) / stats.history.length;
+                document.getElementById('statAvgScore').innerText = Math.round(avg * 100) + '%';
+            } else {
+                document.getElementById('statAvgScore').innerText = '0%';
+            }
+
+            const log = document.getElementById('historyLog');
+            log.innerHTML = '';
+            stats.history.forEach(h => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <span style="color:#888; font-size:0.8rem;">${h.date}</span>
+                    <span style="font-weight:bold; color:${(h.score/h.total) >= 0.7 ? 'var(--accent-green)' : 'var(--accent-red)'}">${h.score}/${h.total}</span>
+                `;
+                log.appendChild(div);
+            });
+        }
+
+        function resetStats() {
+            if(confirm("¿Borrar permanentemente el historial (rm -rf)?")) {
+                localStorage.removeItem('phpExamStats');
+                renderStats();
+            }
+        }
+
+        // --- VIEW MANAGER ---
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            if (viewName === 'setup') {
+                document.getElementById('view-setup').classList.add('active');
+                document.getElementById('navExam').classList.add('active');
+            } else if (viewName === 'quiz') {
+                document.getElementById('view-quiz').classList.add('active');
+                document.getElementById('navExam').classList.add('active');
+            } else if (viewName === 'result') {
+                document.getElementById('view-result').classList.add('active');
+                document.getElementById('navExam').classList.add('active');
+            } else if (viewName === 'stats') {
+                document.getElementById('view-stats').classList.add('active');
+                document.getElementById('navStats').classList.add('active');
+                renderStats();
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return text;
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+    </script>
+</body>
+</html>
